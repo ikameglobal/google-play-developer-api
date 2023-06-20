@@ -1,7 +1,7 @@
 [tool]
 [tool.poetry]
 name = "google-play-developer-api"
-version = "0.1.0"
+version = "0.2.0"
 homepage = "https://github.com/ikameglobal/google-play-developer-api"
 description = "Wrapper for APIs"
 authors = ["ikameglobal <minhpc@ikameglobal.com>"]
