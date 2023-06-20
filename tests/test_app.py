@@ -1,11 +1,12 @@
 #!/usr/bin/env python
-"""Tests for `<package-name-underscore>` package."""
+"""Tests for `google_play_developer_api` package."""
 # pylint: disable=redefined-outer-name
 
 import os
+
 import pytest
 
-from <package-name-underscore> import SampleClass
+from google_play_developer_api import SampleClass
 
 
 @pytest.fixture

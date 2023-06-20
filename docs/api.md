@@ -1,1 +1,1 @@
-::: <package-name-underscore>.example
+::: google_play_developer_api.example
