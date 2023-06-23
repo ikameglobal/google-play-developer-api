@@ -235,3 +235,90 @@ class ReportingService:
             metrics=metrics,
             metric_set=metric_set,
         )
+
+    def get_anr_rate_report_hourly(
+        self,
+        app_package_name: str = "",
+        start_time: str = "YYYY-MM-DD HH:00",
+        end_time: str = "YYYY-MM-DD HH:00",
+        dimensions: list[str] = [],
+        metrics: list[str] = [],
+    ) -> list[dict]:
+        """
+        Get ANR rate report hourly
+
+        Note:
+            Read this doc https://developers.google.com/play/developer/reporting/reference/rest/v1beta1/vitals.anrrate
+
+        Args:
+            app_package_name: App package name
+            start_time: Start time (format YYYY-MM-DD HH:00)
+            end_time: End time (format YYYY-MM-DD HH:00)
+            dimensions: Dimensions (see docs above)
+            metrics: Metrics (see docs above)
+
+        Returns:
+            List of dicts with report data
+        """
+        dimensions = (
+            [
+                "apiLevel",
+                "deviceBrand",
+                "versionCode",
+                "countryCode",
+                "deviceType",
+                "deviceModel",
+                "deviceRamBucket",
+                "deviceSocMake",
+                "deviceSocModel",
+                "deviceCpuMake",
+                "deviceCpuModel",
+                "deviceGpuMake",
+                "deviceGpuModel",
+                "deviceGpuVersion",
+                "deviceVulkanVersion",
+                "deviceGlEsVersion",
+                "deviceScreenSize",
+                "deviceScreenDpi",
+            ]
+            if not dimensions
+            else dimensions
+        )
+
+        metrics = (
+            [
+                "anrRate",
+                "userPerceivedAnrRate",
+                "distinctUsers",
+            ]
+            if not metrics
+            else metrics
+        )
+        metric_set = "anrRateMetricSet"
+
+        start_time = datetime.datetime.strptime(start_time, "%Y-%m-%d %H:00")
+        end_time = datetime.datetime.strptime(end_time, "%Y-%m-%d %H:00")
+
+        timeline_spec = {
+            "aggregationPeriod": "HOURLY",
+            "startTime": {
+                "year": start_time.year,
+                "month": start_time.month,
+                "day": start_time.day,
+                "hours": start_time.hour,
+            },
+            "endTime": {
+                "year": end_time.year,
+                "month": end_time.month,
+                "day": end_time.day,
+                "hours": end_time.hour,
+            },
+        }
+
+        return self._get_report_data(
+            app_package_name=app_package_name,
+            timeline_spec=timeline_spec,
+            dimensions=dimensions,
+            metrics=metrics,
+            metric_set=metric_set,
+        )
