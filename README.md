@@ -9,5 +9,4 @@ Wrapper for APIs
 
 ## Features
 
-* Something
-* Something else
+* Crash rate hourly report from Google Play Developer API
