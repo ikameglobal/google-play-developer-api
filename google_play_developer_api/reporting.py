@@ -9,7 +9,7 @@ class ReportingService:
         credentials = service_account.Credentials.from_service_account_file(
             credentials_path, scopes=["https://www.googleapis.com/auth/playdeveloperreporting"]
         )
-        self.reporting_service = build(
+        self._reporting_service = build(
             "playdeveloperreporting", "v1beta1", credentials=credentials, cache_discovery=False
         )
 
@@ -73,7 +73,7 @@ class ReportingService:
         # GET DATA
         if metric_set == "anrRateMetricSet":
             report = (
-                self.reporting_service.vitals()
+                self._reporting_service.vitals()
                 .anrrate()
                 .query(
                     name=f"apps/{app_package_name}/{metric_set}",
@@ -83,7 +83,7 @@ class ReportingService:
             )
         elif metric_set == "crashRateMetricSet":
             report = (
-                self.reporting_service.vitals()
+                self._reporting_service.vitals()
                 .crashrate()
                 .query(
                     name=f"apps/{app_package_name}/{metric_set}",
@@ -93,7 +93,7 @@ class ReportingService:
             )
         elif metric_set == "excessiveWakeupRateMetricSet":
             report = (
-                self.reporting_service.vitals()
+                self._reporting_service.vitals()
                 .excessivewakeuprate()
                 .query(
                     name=f"apps/{app_package_name}/{metric_set}",
@@ -103,7 +103,7 @@ class ReportingService:
             )
         elif metric_set == "stuckBackgroundWakelockRateMetricSet":
             report = (
-                self.reporting_service.vitals()
+                self._reporting_service.vitals()
                 .stuckbackgroundwakelockrate()
                 .query(
                     name=f"apps/{app_package_name}/{metric_set}",
