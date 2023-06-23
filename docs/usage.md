@@ -3,13 +3,15 @@ the [Reporting API](https://google.com).
 
 # Reporting API
 
-## Get report
+## Get crash rate hourly report
 
 ```python
-from google_play_developer_api import SampleClass
+from google_play_developer_api import ReportingService
 
-report = SampleClass(api_key="your_api_key")
-result = report.get_report()
+report = ReportingService(credentials_path='<path-to-your-credentials>')
+result = report.get_crash_rate_report_hourly(app_package_name='your-app-package',
+                                             start_time='YYYY-MM-DD HH:00',
+                                             end_time='YYYY-MM-DD HH:00')
 print(result)
 ```
 
