@@ -20,6 +20,7 @@ class ReportingService:
         dimensions: list[str] = [],
         metrics: list[str] = [],
         metric_set: str = "",
+        page_size: int = 100000,
     ) -> list[dict]:
         """
         Get report data from Google Play Developer API
@@ -33,6 +34,7 @@ class ReportingService:
             dimensions: Dimensions (see docs above)
             metrics: Metrics (see docs above)
             metric_set: One of the following *anrRateMetricSet*, *crashRateMetricSet*, *excessiveWakeupRateMetricSet*, *stuckBackgroundWakelockRateMetricSet*
+            page_size: Page size
 
         Returns:
             List of dicts with report data
@@ -63,57 +65,65 @@ class ReportingService:
             else dimensions
         )
 
-        body = {
-            "dimensions": dimensions,
-            "metrics": metrics,
-            "timelineSpec": timeline_spec,
-            "pageSize": 100000,
-        }
-
         # GET DATA
-        if metric_set == "anrRateMetricSet":
-            report = (
-                self._reporting_service.vitals()
-                .anrrate()
-                .query(
-                    name=f"apps/{app_package_name}/{metric_set}",
-                    body=body,
+        page_token = ""
+        rows = []
+        while True:
+            body = {
+                "dimensions": dimensions,
+                "metrics": metrics,
+                "timelineSpec": timeline_spec,
+                "pageSize": page_size,
+                "pageToken": page_token
+            }
+
+            if metric_set == "anrRateMetricSet":
+                report = (
+                    self._reporting_service.vitals()
+                    .anrrate()
+                    .query(
+                        name=f"apps/{app_package_name}/{metric_set}",
+                        body=body,
+                    )
+                    .execute()
                 )
-                .execute()
-            )
-        elif metric_set == "crashRateMetricSet":
-            report = (
-                self._reporting_service.vitals()
-                .crashrate()
-                .query(
-                    name=f"apps/{app_package_name}/{metric_set}",
-                    body=body,
+            elif metric_set == "crashRateMetricSet":
+                report = (
+                    self._reporting_service.vitals()
+                    .crashrate()
+                    .query(
+                        name=f"apps/{app_package_name}/{metric_set}",
+                        body=body,
+                    )
+                    .execute()
                 )
-                .execute()
-            )
-        elif metric_set == "excessiveWakeupRateMetricSet":
-            report = (
-                self._reporting_service.vitals()
-                .excessivewakeuprate()
-                .query(
-                    name=f"apps/{app_package_name}/{metric_set}",
-                    body=body,
+            elif metric_set == "excessiveWakeupRateMetricSet":
+                report = (
+                    self._reporting_service.vitals()
+                    .excessivewakeuprate()
+                    .query(
+                        name=f"apps/{app_package_name}/{metric_set}",
+                        body=body,
+                    )
+                    .execute()
                 )
-                .execute()
-            )
-        elif metric_set == "stuckBackgroundWakelockRateMetricSet":
-            report = (
-                self._reporting_service.vitals()
-                .stuckbackgroundwakelockrate()
-                .query(
-                    name=f"apps/{app_package_name}/{metric_set}",
-                    body=body,
+            elif metric_set == "stuckBackgroundWakelockRateMetricSet":
+                report = (
+                    self._reporting_service.vitals()
+                    .stuckbackgroundwakelockrate()
+                    .query(
+                        name=f"apps/{app_package_name}/{metric_set}",
+                        body=body,
+                    )
+                    .execute()
                 )
-                .execute()
-            )
+
+            rows.extend(report["rows"])
+            page_token = report.get("nextPageToken", "")
+            if not page_token:
+                break
 
         # PARSE DATA
-        rows = report["rows"]
         result_list = []
         for row in rows:
             year = row["startTime"].get("year")
