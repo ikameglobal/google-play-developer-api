@@ -118,7 +118,7 @@ class ReportingService:
                     .execute()
                 )
 
-            rows.extend(report["rows"])
+            rows.extend(report.get("rows", []))
             page_token = report.get("nextPageToken", "")
             if not page_token:
                 break
