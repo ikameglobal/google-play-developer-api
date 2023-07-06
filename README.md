@@ -9,4 +9,5 @@ Wrapper for APIs
 
 ## Features
 
-* Crash rate hourly report from Google Play Developer API
+* Crash rate hourly and daily report from Google Play Developer API
+* ANR rate hourly and daily report from Google Play Developer API
