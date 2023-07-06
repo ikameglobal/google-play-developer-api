@@ -58,7 +58,53 @@ def test_anr_rate_report_hourly(credentials_path):
                                                     end_time=end_date)
 
     assert len(report_data) > 0
-    # create  dataframes and write to csv
-    # import pandas as pd
-    # df = pd.DataFrame(report_data)
-    # df.to_csv("anr_rate_report_hourly.csv", index=False)
+
+
+def test_anr_rate_report_daily(credentials_path):
+    app_package_name = os.environ.get("APP_PACKAGE", None)
+    assert app_package_name is not None
+
+    report = ReportingService(credentials_path=credentials_path)
+    assert report is not None
+
+    # Set start_date to Yesterday 00:00 and end_date to Yesterday 02:00
+    start_date = datetime.datetime.now() - datetime.timedelta(days=15)
+    start_date = start_date.replace(hour=0, minute=0, second=0, microsecond=0)
+
+    end_date = start_date + datetime.timedelta(days=13)
+
+    start_date = start_date.strftime("%Y-%m-%d")
+    end_date = end_date.strftime("%Y-%m-%d")
+    print(start_date)
+    print(end_date)
+
+    report_data = report.get_anr_rate_report_daily(app_package_name=app_package_name,
+                                                   start_time=start_date,
+                                                   end_time=end_date)
+
+    assert len(report_data) > 0
+
+
+def test_crash_rate_report_daily(credentials_path):
+    app_package_name = os.environ.get("APP_PACKAGE", None)
+    assert app_package_name is not None
+
+    report = ReportingService(credentials_path=credentials_path)
+    assert report is not None
+
+    # Set start_date to Yesterday 00:00 and end_date to Yesterday 02:00
+    start_date = datetime.datetime.now() - datetime.timedelta(days=15)
+    start_date = start_date.replace(hour=0, minute=0, second=0, microsecond=0)
+
+    end_date = start_date + datetime.timedelta(days=13)
+
+    start_date = start_date.strftime("%Y-%m-%d")
+    end_date = end_date.strftime("%Y-%m-%d")
+    print(start_date)
+    print(end_date)
+
+    report_data = report.get_crash_rate_report_daily(app_package_name=app_package_name,
+                                                     start_time=start_date,
+                                                     end_time=end_date)
+
+    assert len(report_data) > 0
