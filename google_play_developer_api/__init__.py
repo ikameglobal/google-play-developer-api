@@ -1,2 +1,2 @@
 """Top-level package for this lib."""
-from .reporting import ReportingService
+from .base_report import BaseReportingService
