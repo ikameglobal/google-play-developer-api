@@ -1,6 +1,7 @@
 import datetime
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
 
 
 class BaseReportingService:
@@ -71,6 +72,9 @@ class BaseReportingService:
                     report = self._metric_sets[metric_set].query(name=f"apps/{app_package_name}/{metric_set}",
                                                                  body=body).execute()
                     break
+                except HttpError as e:
+                    if 'permission' in str(e):
+                        return []
                 except TimeoutError as e:
                     raise e
                 except Exception as e:
