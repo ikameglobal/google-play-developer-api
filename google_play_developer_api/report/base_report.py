@@ -70,6 +70,8 @@ class BaseReportingService:
                     report = self._metric_sets[metric_set].query(name=f"apps/{app_package_name}/{metric_set}",
                                                                  body=body).execute()
                     break
+                except TimeoutError as e:
+                    raise e
                 except Exception as e:
                     if i == retry_count - 1:
                         raise e

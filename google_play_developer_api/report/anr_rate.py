@@ -141,11 +141,3 @@ class AnrRateReport(BaseReportingService):
             metrics=metrics,
             metric_set=self._metric_set,
         )
-
-
-if __name__ == '__main__':
-    service = AnrRateReport(credentials_path='/home/dawn/work/.secrets/ikame_game_google_play_developer_report.json')
-    data = service.get_anr_rate_report_daily(app_package_name='com.jura.coloring.page',
-                                             start_time='2023-09-01',
-                                             end_time='2023-09-05')
-    print(data)
