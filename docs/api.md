@@ -1,1 +1,1 @@
-::: google_play_developer_api.reporting
+::: google_play_developer_api.report.base_report
