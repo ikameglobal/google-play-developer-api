@@ -75,6 +75,8 @@ class BaseReportingService:
                 except HttpError as e:
                     if 'permission' in str(e):
                         return []
+                    else:
+                        raise e
                 except TimeoutError as e:
                     raise e
                 except Exception as e:
