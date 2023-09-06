@@ -2,6 +2,6 @@ from .anr_rate import AnrRateReport
 from .crash_rate import CrashRateReport
 from .error_count import ErrorCountReport
 from .excessive_wake_up_rate import ExcessiveWakeUpRateReport
-from slow_start_rate import SlowStartRateReport
+from .slow_start_rate import SlowStartRateReport
 from .slow_rendering_rate import SlowRenderingRateReport
 from .stuck_background_wake_lock_rate import StuckBackgroundWakelockRateReport
