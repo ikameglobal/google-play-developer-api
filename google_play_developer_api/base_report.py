@@ -1,5 +1,3 @@
-import datetime
-
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
 
@@ -35,6 +33,8 @@ class BaseReportingService:
         metrics: list[str] = [],
         metric_set: str = "",
         page_size: int = 50000,
+        retry_count: int = 3,
+        sleep_time: int = 15,
     ) -> list[dict]:
         """
         Query report data from Google Play Developer API
@@ -65,8 +65,18 @@ class BaseReportingService:
                 "pageToken": page_token
             }
 
-            report = self._metric_sets[metric_set].query(name=f"apps/{app_package_name}/{metric_set}",
-                                                         body=body).execute()
+            for i in range(retry_count):
+                try:
+                    report = self._metric_sets[metric_set].query(name=f"apps/{app_package_name}/{metric_set}",
+                                                                 body=body).execute()
+                    break
+                except Exception as e:
+                    if i == retry_count - 1:
+                        raise e
+                    else:
+                        import time
+                        time.sleep(sleep_time)
+                        continue
 
             rows.extend(report.get("rows", []))
             page_token = report.get("nextPageToken", "")
@@ -148,226 +158,3 @@ class BaseReportingService:
             }
 
         return result
-
-
-if __name__ == '__main__':
-    report_service = BaseReportingService(
-        credentials_path='/home/dawn/work/.secrets/ikame_game_google_play_developer_report.json')
-
-    start_time = datetime.datetime.strptime('2023-09-01', "%Y-%m-%d")
-    end_time = datetime.datetime.strptime('2023-09-04', "%Y-%m-%d")
-
-    timeline_spec = {
-        "aggregationPeriod": "DAILY",
-        "startTime": {
-            "year": start_time.year,
-            "month": start_time.month,
-            "day": start_time.day,
-            "timeZone": {"id": "America/Los_Angeles"},
-        },
-        "endTime": {
-            "year": end_time.year,
-            "month": end_time.month,
-            "day": end_time.day,
-            "timeZone": {"id": "America/Los_Angeles"},
-        },
-    }
-
-    dimensions = ['reportType', 'versionCode', 'issueId', 'apiLevel', 'deviceModel', 'deviceBrand',
-                  'deviceType', 'deviceRamBucket', 'deviceSocMake', 'deviceSocModel', 'deviceCpuMake', 'deviceCpuModel',
-                  'deviceGpuMake', 'deviceGpuModel', 'deviceGpuVersion', 'deviceVulkanVersion', 'deviceGlEsVersion',
-                  'deviceScreenSize', 'deviceScreenDpi']
-    metrics = ['errorReportCount', 'distinctUsers']
-
-    # a = report_service._query(
-    #     app_package_name='com.jura.coloring.page',
-    #     timeline_spec=timeline_spec,
-    #     dimensions=dimensions,
-    #     metrics=metrics,
-    #     metric_set='errorCountMetricSet',
-    #     page_size=50000
-    # )
-
-    a = report_service.get_freshnesses(
-        app_package_name='com.jura.coloring.page',
-        metric_set='stuckBackgroundWakelockRateMetricSet',
-    )
-
-    print(a)
-#     def get_crash_rate_report_hourly(
-#         self,
-#         app_package_name: str = "",
-#         start_time: str = "YYYY-MM-DD HH:00",
-#         end_time: str = "YYYY-MM-DD HH:00",
-#         dimensions: list[str] = [],
-#         metrics: list[str] = [],
-#     ) -> list[dict]:
-#         """
-#         Get crash rate report hourly
-#
-#         Note:
-#             Read this doc https://developers.google.com/play/developer/reporting/reference/rest/v1beta1/vitals.crashrate/query#request-body
-#
-#         Args:
-#             app_package_name: App package name
-#             start_time: Start time (format YYYY-MM-DD HH:00)
-#             end_time: End time (format YYYY-MM-DD HH:00)
-#             dimensions: Dimensions (see docs above)
-#             metrics: Metrics (see docs above)
-#
-#         Returns:
-#             List of dicts with report data
-#         """
-#         dimensions = (
-#             [
-#                 "apiLevel",
-#                 "deviceBrand",
-#                 "versionCode",
-#                 "countryCode",
-#                 "deviceType",
-#                 "deviceModel",
-#                 "deviceRamBucket",
-#                 "deviceSocMake",
-#                 "deviceSocModel",
-#                 "deviceCpuMake",
-#                 "deviceCpuModel",
-#                 "deviceGpuMake",
-#                 "deviceGpuModel",
-#                 "deviceGpuVersion",
-#                 "deviceVulkanVersion",
-#                 "deviceGlEsVersion",
-#                 "deviceScreenSize",
-#                 "deviceScreenDpi",
-#             ]
-#             if not dimensions
-#             else dimensions
-#         )
-#
-#         metrics = (
-#             [
-#                 "crashRate",
-#                 "userPerceivedCrashRate",
-#                 "distinctUsers",
-#             ]
-#             if not metrics
-#             else metrics
-#         )
-#         metric_set = "crashRateMetricSet"
-#
-#         start_time = datetime.datetime.strptime(start_time, "%Y-%m-%d %H:00")
-#         end_time = datetime.datetime.strptime(end_time, "%Y-%m-%d %H:00")
-#
-#         timeline_spec = {
-#             "aggregationPeriod": "HOURLY",
-#             "startTime": {
-#                 "year": start_time.year,
-#                 "month": start_time.month,
-#                 "day": start_time.day,
-#                 "hours": start_time.hour,
-#             },
-#             "endTime": {
-#                 "year": end_time.year,
-#                 "month": end_time.month,
-#                 "day": end_time.day,
-#                 "hours": end_time.hour,
-#             },
-#         }
-#
-#         return self._query(
-#             app_package_name=app_package_name,
-#             timeline_spec=timeline_spec,
-#             dimensions=dimensions,
-#             metrics=metrics,
-#             metric_set=metric_set,
-#         )
-#
-#
-#
-#     def get_crash_rate_report_daily(
-#         self,
-#         app_package_name: str = "",
-#         start_time: str = "YYYY-MM-DD",
-#         end_time: str = "YYYY-MM-DD",
-#         dimensions: list[str] = [],
-#         metrics: list[str] = [],
-#     ) -> list[dict]:
-#         """
-#         Get crash rate report daily
-#
-#         Note:
-#             Read this doc https://developers.google.com/play/developer/reporting/reference/rest/v1beta1/vitals.crashrate/query#request-body
-#
-#         Args:
-#             app_package_name: App package name
-#             start_time: Start time (format YYYY-MM-DD)
-#             end_time: End time (format YYYY-MM-DD)
-#             dimensions: Dimensions (see docs above)
-#             metrics: Metrics (see docs above)
-#
-#         Returns:
-#             List of dicts with report data
-#         """
-#         dimensions = (
-#             [
-#                 "apiLevel",
-#                 "deviceBrand",
-#                 "versionCode",
-#                 "countryCode",
-#                 "deviceType",
-#                 "deviceModel",
-#                 "deviceRamBucket",
-#                 "deviceSocMake",
-#                 "deviceSocModel",
-#                 "deviceCpuMake",
-#                 "deviceCpuModel",
-#                 "deviceGpuMake",
-#                 "deviceGpuModel",
-#                 "deviceGpuVersion",
-#                 "deviceVulkanVersion",
-#                 "deviceGlEsVersion",
-#                 "deviceScreenSize",
-#                 "deviceScreenDpi",
-#             ]
-#             if not dimensions
-#             else dimensions
-#         )
-#
-#         metrics = (
-#             [
-#                 "crashRate",
-#                 "userPerceivedCrashRate",
-#                 "distinctUsers",
-#             ]
-#             if not metrics
-#             else metrics
-#         )
-#         metric_set = "crashRateMetricSet"
-#
-#         start_time = datetime.datetime.strptime(start_time, "%Y-%m-%d")
-#         end_time = datetime.datetime.strptime(end_time, "%Y-%m-%d")
-#
-#         timeline_spec = {
-#             "aggregationPeriod": "DAILY",
-#             "startTime": {
-#                 "year": start_time.year,
-#                 "month": start_time.month,
-#                 "day": start_time.day,
-#                 "timeZone": {"id": "America/Los_Angeles"},
-#             },
-#             "endTime": {
-#                 "year": end_time.year,
-#                 "month": end_time.month,
-#                 "day": end_time.day,
-#                 "timeZone": {"id": "America/Los_Angeles"},
-#             },
-#         }
-#
-#         return self._query(
-#             app_package_name=app_package_name,
-#             timeline_spec=timeline_spec,
-#             dimensions=dimensions,
-#             metrics=metrics,
-#             metric_set=metric_set,
-#         )
-#
-#
