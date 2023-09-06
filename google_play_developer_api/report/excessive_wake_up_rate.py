@@ -28,8 +28,6 @@ class ExcessiveWakeUpRateReport(BaseReportingService):
 
         self._default_metrics = [
             "excessiveWakeupRate",
-            "excessiveWakeupRate7dUserWeighted",
-            "excessiveWakeupRate28dUserWeighted",
             "distinctUsers",
         ]
 
