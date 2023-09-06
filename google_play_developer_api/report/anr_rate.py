@@ -1,5 +1,5 @@
 import datetime
-from google_play_developer_api.base_report import BaseReportingService
+from google_play_developer_api.report.base_report import BaseReportingService
 
 
 class AnrRateReport(BaseReportingService):
@@ -34,7 +34,7 @@ class AnrRateReport(BaseReportingService):
 
         self._metric_set = "anrRateMetricSet"
 
-    def get_anr_rate_report_hourly(
+    def get_hourly(
         self,
         app_package_name: str = "",
         start_time: str = "YYYY-MM-DD HH:MM",
@@ -88,7 +88,7 @@ class AnrRateReport(BaseReportingService):
             metric_set=self._metric_set,
         )
 
-    def get_anr_rate_report_daily(
+    def get_daily(
         self,
         app_package_name: str = "",
         start_time: str = "YYYY-MM-DD",
