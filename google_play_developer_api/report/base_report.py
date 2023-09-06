@@ -184,6 +184,20 @@ class BaseReportingService:
         metric_set: str = None,
         **kwargs,
     ) -> list[dict]:
+        """
+        Get hourly report data from Google Play Developer API
+
+        Args:
+            app_package_name: App package name
+            start_time: Start time (format: YYYY-MM-DD HH:MM)
+            end_time: End time (format: YYYY-MM-DD HH:MM)
+            dimensions: Dimensions
+            metrics: Metrics
+            metric_set: One of ['anrRateMetricSet', 'crashRateMetricSet', 'errorCountMetricSet', 'excessiveWakeupRateMetricSet', 'slowRenderingRateMetricSet', 'slowStartRateMetricSet', 'stuckBackgroundWakelockRateMetricSet']
+
+        Returns:
+            List of dicts with report data
+        """
         dimensions = self._default_dimensions if not dimensions else dimensions
         metrics = self._default_metrics if not metrics else metrics
         metric_set = self._metric_set if not metric_set else metric_set  # Default of each child class
@@ -226,6 +240,20 @@ class BaseReportingService:
         metric_set: str = None,
         **kwargs,
     ) -> list[dict]:
+        """
+        Get daily report data from Google Play Developer API
+
+        Args:
+            app_package_name: App package name
+            start_time: Start time (format: YYYY-MM-DD)
+            end_time: End time (format: YYYY-MM-DD)
+            dimensions: Dimensions
+            metrics: Metrics
+            metric_set: One of ['anrRateMetricSet', 'crashRateMetricSet', 'errorCountMetricSet', 'excessiveWakeupRateMetricSet', 'slowRenderingRateMetricSet', 'slowStartRateMetricSet', 'stuckBackgroundWakelockRateMetricSet']
+
+        Returns:
+            List of dicts with report data
+        """
         dimensions = self._default_dimensions if not dimensions else dimensions
         metrics = self._default_metrics if not metrics else metrics
         metric_set = self._metric_set if not metric_set else metric_set  # Default of each child class
