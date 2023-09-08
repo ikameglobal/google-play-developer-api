@@ -75,10 +75,8 @@ class BaseReportingService:
                                                                  body=body).execute()
                     break
                 except HttpError as e:
-                    if 'permission' in str(e):
-                        raise HttpError(f'This credential does not have access to app {app_package_name}')
-                    else:
-                        raise e
+                    logging.warning(f'Permission denied for {app_package_name}')
+                    return []
                 except TimeoutError as e:
                     raise e
                 except Exception as e:
