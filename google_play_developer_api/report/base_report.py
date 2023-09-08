@@ -1,3 +1,5 @@
+import logging
+import time
 import datetime
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
@@ -74,7 +76,7 @@ class BaseReportingService:
                     break
                 except HttpError as e:
                     if 'permission' in str(e):
-                        return []
+                        raise HttpError(f'This credential does not have access to app {app_package_name}')
                     else:
                         raise e
                 except TimeoutError as e:
@@ -83,8 +85,8 @@ class BaseReportingService:
                     if i == retry_count - 1:
                         raise e
                     else:
-                        import time
                         time.sleep(sleep_time)
+                        logging.warning(f"Retry {i + 1}/{retry_count}...")
                         continue
 
             rows.extend(report.get("rows", []))
