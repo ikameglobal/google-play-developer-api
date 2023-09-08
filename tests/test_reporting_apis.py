@@ -53,11 +53,6 @@ def test_anr_rate_report(credentials_path):
 
     end_date = start_date + datetime.timedelta(hours=1, days=1)
 
-    start_date = start_date.strftime("%Y-%m-%d")
-    end_date = end_date.strftime("%Y-%m-%d")
-    print(start_date)
-    print(end_date)
-
     report_data = report.get_daily(app_package_name=app_package_name,
                                    start_time=start_date.strftime("%Y-%m-%d"),
                                    end_time=end_date.strftime("%Y-%m-%d"))
