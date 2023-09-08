@@ -107,9 +107,9 @@ class BaseReportingService:
                 hour = ""
 
             result = {
-                "event_date": f"{year}-{month}-{day}{hour}",
-                "time_zone": row["startTime"]["timeZone"]["id"],
-                "app_package_name": app_package_name,
+                "eventDate": f"{year}-{month}-{day}{hour}",
+                "timeZone": row["startTime"]["timeZone"]["id"],
+                "appPackageName": app_package_name,
             }
 
             # dimensions
