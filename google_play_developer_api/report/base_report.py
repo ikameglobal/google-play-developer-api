@@ -75,8 +75,12 @@ class BaseReportingService:
                                                                  body=body).execute()
                     break
                 except HttpError as e:
-                    logging.warning(f'Permission denied for {app_package_name}')
+                    if e.resp.status == 403:
+                        logging.warning(f'Permission denied for {app_package_name}')
+                    elif e.resp.status == 400:
+                        logging.warning(f'Bad request for {app_package_name}, {e.reason}')
                     return []
+
                 except TimeoutError as e:
                     raise e
                 except Exception as e:
