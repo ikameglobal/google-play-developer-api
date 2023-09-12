@@ -78,7 +78,8 @@ class BaseReportingService:
                     if e.resp.status == 403:
                         logging.warning(f'Permission denied for {app_package_name}')
                     elif e.resp.status == 400:
-                        raise Exception(f'Bad request for {app_package_name}, {e.reason}')
+                        logging.warning(f'Bad request for {app_package_name}, {e.reason}')
+                        raise e
                     return []
 
                 except TimeoutError as e:
