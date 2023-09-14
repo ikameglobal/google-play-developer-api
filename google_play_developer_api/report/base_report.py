@@ -118,7 +118,8 @@ class BaseReportingService:
             }
 
             # dimensions
-            for dimension in row["dimensions"]:
+            _dimensions = row.get("dimensions", [])
+            for dimension in _dimensions:
                 if "stringValue" in dimension:
                     result[f'{dimension["dimension"]}'] = dimension["stringValue"]
                 elif "int64Value" in dimension:
@@ -126,7 +127,8 @@ class BaseReportingService:
                 else:
                     result[f'{dimension["dimension"]}'] = ""
             # metrics
-            for metric in row["metrics"]:
+            _metrics = row.get("metrics", [])
+            for metric in _metrics:
                 result[f'{metric["metric"]}'] = metric["decimalValue"]["value"] if "decimalValue" in metric else ""
 
             result_list.append(result)
@@ -246,8 +248,8 @@ class BaseReportingService:
         app_package_name: str = "",
         start_time: str = "YYYY-MM-DD",
         end_time: str = "YYYY-MM-DD",
-        dimensions: list[str] = [],
-        metrics: list[str] = [],
+        dimensions: list[str] = None,
+        metrics: list[str] = None,
         metric_set: str = None,
         **kwargs,
     ) -> list[dict]:
@@ -265,9 +267,9 @@ class BaseReportingService:
         Returns:
             List of dicts with report data
         """
-        dimensions = self._default_dimensions if not dimensions else dimensions
-        metrics = self._default_metrics if not metrics else metrics
-        metric_set = self._metric_set if not metric_set else metric_set  # Default of each child class
+        dimensions = self._default_dimensions if dimensions is None else dimensions
+        metrics = self._default_metrics if metrics is None else metrics
+        metric_set = self._metric_set if metric_set is None else metric_set  # Default of each child class
 
         start_time = datetime.datetime.strptime(start_time, "%Y-%m-%d")
         end_time = datetime.datetime.strptime(end_time, "%Y-%m-%d")
