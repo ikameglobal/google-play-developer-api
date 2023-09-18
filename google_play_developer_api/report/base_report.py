@@ -211,9 +211,9 @@ class BaseReportingService:
         Returns:
             List of dicts with report data
         """
-        dimensions = self._default_dimensions if not dimensions else dimensions
-        metrics = self._default_metrics if not metrics else metrics
-        metric_set = self._metric_set if not metric_set else metric_set  # Default of each child class
+        dimensions = self._default_dimensions if dimensions is None else dimensions
+        metrics = self._default_metrics if metrics is None else metrics
+        metric_set = self._metric_set if metric_set is None else metric_set  # Default of each child class
 
         start_time = datetime.datetime.strptime(start_time, "%Y-%m-%d %H:%M")
         end_time = datetime.datetime.strptime(end_time, "%Y-%m-%d %H:%M")
