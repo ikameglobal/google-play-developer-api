@@ -273,6 +273,8 @@ class BaseReportingService:
 
         start_time = datetime.datetime.strptime(start_time, "%Y-%m-%d")
         end_time = datetime.datetime.strptime(end_time, "%Y-%m-%d")
+        # Add 1 day to end_time to include end_time in report
+        end_time = end_time + datetime.timedelta(days=1)
 
         timeline_spec = {
             "aggregationPeriod": "DAILY",
